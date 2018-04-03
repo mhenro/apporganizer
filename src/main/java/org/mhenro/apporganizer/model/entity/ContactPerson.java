@@ -1,26 +1,15 @@
 package org.mhenro.apporganizer.model.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
-@Entity
-public class ContactPerson {
-    private Long id;
+@Embeddable
+public class ContactPerson implements Serializable {
     private String firstName;
     private String lastName;
     private String phone;
     private String email;
     private String salutation;
-
-    @Id
-    @SequenceGenerator(name = "seq", initialValue = 1, allocationSize = 100)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq")
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getFirstName() {
         return firstName;

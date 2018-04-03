@@ -1,25 +1,14 @@
 package org.mhenro.apporganizer.model.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
-@Entity
-public class Address {
-    private Long id;
+@Embeddable
+public class Address implements Serializable {
     private String street;
-    private Integer houseNumber;
+    private String houseNumber;
     private String postalCode;
     private String locality;
-
-    @Id
-    @SequenceGenerator(name = "seq", initialValue = 1, allocationSize = 100)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq")
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getStreet() {
         return street;
@@ -29,11 +18,11 @@ public class Address {
         this.street = street;
     }
 
-    public Integer getHouseNumber() {
+    public String getHouseNumber() {
         return houseNumber;
     }
 
-    public void setHouseNumber(Integer houseNumber) {
+    public void setHouseNumber(String houseNumber) {
         this.houseNumber = houseNumber;
     }
 

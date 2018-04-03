@@ -1,9 +1,10 @@
 package org.mhenro.apporganizer.model.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
-public class Company {
+public class Company implements Serializable {
     private Long id;
     private String name;
     private String url;
@@ -37,8 +38,7 @@ public class Company {
         this.url = url;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "address_id")
+    @Embedded
     public Address getAddress() {
         return address;
     }
@@ -47,8 +47,7 @@ public class Company {
         this.address = address;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "contact_id")
+    @Embedded
     public ContactPerson getContactPerson() {
         return contactPerson;
     }

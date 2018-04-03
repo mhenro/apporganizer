@@ -1,11 +1,12 @@
 package org.mhenro.apporganizer.model.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
-public class Appointment {
+public class Appointment implements Serializable {
     private Long id;
     private Boolean confirmed;
     private Boolean cancelled;
@@ -65,7 +66,7 @@ public class Appointment {
         this.time = time;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "company_id")
     public Company getCompany() {
         return company;
