@@ -66,7 +66,7 @@ public class Appointment implements Serializable {
         this.time = time;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "company_id")
     public Company getCompany() {
         return company;
