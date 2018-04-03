@@ -3,6 +3,7 @@ package org.mhenro.apporganizer.service;
 import org.mhenro.apporganizer.model.entity.Appointment;
 import org.mhenro.apporganizer.model.exception.ObjectNotFoundException;
 import org.mhenro.apporganizer.model.exception.WrongDataException;
+import org.mhenro.apporganizer.model.request.AppointmentNoteRequest;
 import org.mhenro.apporganizer.model.request.AppointmentRequest;
 import org.mhenro.apporganizer.repository.AppointmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,16 @@ public class AppointmentService {
             throw new WrongDataException("Appointment is already cancelled");
         }
         appointment.setConfirmed(true);
+        appointmentRepository.save(appointment);
+    }
+
+    @Transactional
+    public void addNoteToAppointment(final AppointmentNoteRequest request) {
+        final Appointment appointment = getAppointmentDetails(request.getId());
+        if (!appointment.getConfirmed()) {
+            throw new WrongDataException("You can add note only to confirmed appointment");
+        }
+        appointment.setNote(request.getNote());
         appointmentRepository.save(appointment);
     }
 

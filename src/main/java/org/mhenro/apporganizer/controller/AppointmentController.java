@@ -4,6 +4,7 @@ import org.mhenro.apporganizer.model.Response;
 import org.mhenro.apporganizer.model.entity.Appointment;
 import org.mhenro.apporganizer.model.exception.ObjectNotFoundException;
 import org.mhenro.apporganizer.model.exception.WrongDataException;
+import org.mhenro.apporganizer.model.request.AppointmentNoteRequest;
 import org.mhenro.apporganizer.model.request.AppointmentRequest;
 import org.mhenro.apporganizer.service.AppointmentService;
 import org.mhenro.apporganizer.util.ControllerHelper;
@@ -44,6 +45,12 @@ public class AppointmentController {
     public ResponseEntity<?> confirmAppointment(@PathVariable final Long id) {
         appointmentService.confirmAppointment(id);
         return Response.createResponseEntity("Appointment was confirmed successfully", HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "appointments/note", method = RequestMethod.POST)
+    public ResponseEntity<?> addNoteToAppointment(@RequestBody final AppointmentNoteRequest request) {
+        appointmentService.addNoteToAppointment(request);
+        return Response.createResponseEntity("The note was added successfully to the appointment", HttpStatus.OK);
     }
 
     @RequestMapping(value = "appointments/{id}/cancel", method = RequestMethod.GET)
