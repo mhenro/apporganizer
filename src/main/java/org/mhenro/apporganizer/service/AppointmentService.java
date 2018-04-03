@@ -58,6 +58,7 @@ public class AppointmentService {
 
     @Transactional
     public void deleteAppointment(final Long id) {
-        appointmentRepository.deleteById(id);
+        final Appointment appointment = getAppointmentDetails(id);
+        appointmentRepository.delete(appointment);
     }
 }

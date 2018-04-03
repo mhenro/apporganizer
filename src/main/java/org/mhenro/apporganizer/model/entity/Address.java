@@ -6,7 +6,7 @@ import java.io.Serializable;
 @Embeddable
 public class Address implements Serializable {
     private String street;
-    private String houseNumber;
+    private Integer houseNumber;
     private String postalCode;
     private String locality;
 
@@ -18,11 +18,11 @@ public class Address implements Serializable {
         this.street = street;
     }
 
-    public String getHouseNumber() {
+    public Integer getHouseNumber() {
         return houseNumber;
     }
 
-    public void setHouseNumber(String houseNumber) {
+    public void setHouseNumber(Integer houseNumber) {
         this.houseNumber = houseNumber;
     }
 
