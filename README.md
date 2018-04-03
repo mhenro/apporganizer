@@ -9,13 +9,13 @@
 <p>The appointment itself consists of a date, a time and some contact information about the company where that appointment is going to take place. That company has a name, a street, a house number, a postal code, a locality,  a web URL and a contact person with a telephone number, an email address, a salutation, a first name and a last name.</p>
 
 <h2>Backend</h2>
-<p>Exposes JSON REST API.
-Allow download whole data as CSV.</p>
+<ul><li>Exposes JSON REST API.</li>
+<li>Allow download whole data as CSV.</li></ul>
 
 <h2>Frontend</h2>
-<p>Use JS framework for implementing frontend. Use routing for displaying two pages: 
-list of appointments;
-edit details.</p>
+Use JS framework for implementing frontend. Use routing for displaying two pages: <ul>
+<li>list of appointments;</li>
+<li>edit details.</li></ul>
 
 <h2>List of appointments</h2>
 <p>Shows list of appointments with action buttons (edit, delete, cancel, confirm). Edit opens “Edit details” page. Also place here action to download CSV file.</p>
