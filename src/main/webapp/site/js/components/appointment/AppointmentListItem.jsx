@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+
 import { formatDate } from '../../utils.jsx';
 
 
@@ -58,7 +60,7 @@ class AppointmentListItem extends React.Component {
                 <button className={'btn btn-info ' + (noteBtnVisible ? '' : 'hidden')}>Show note</button>
                 <button onClick={() => this.onClick(() => this.props.onConfirm(appId))} className={'btn btn-success ' + (confirmBtnVisible ? '' : 'hidden')}>Confirm</button>
                 <button onClick={() => this.onClick(() => this.props.onCancel(appId))} className={'btn btn-warning ' + (cancelBtnVisible ? '' : 'hidden')}>Cancel</button>
-                <button className={'btn btn-info ' + (editBtnVisible ? '' : 'hidden')}>Edit</button>
+                <Link to={'/appointments/' + this.props.appointment.id} className={'btn btn-info ' + (editBtnVisible ? '' : 'hidden')}>Edit</Link>
                 <button onClick={() => this.onClick(() => this.props.onDelete(appId))} className={'btn btn-danger ' + (deleteBtnVisible ? '' : 'hidden')}>Delete</button>
             </div>
         )

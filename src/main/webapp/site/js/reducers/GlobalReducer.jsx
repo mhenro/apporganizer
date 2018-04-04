@@ -1,5 +1,6 @@
 import {
     SET_APPOINTMENTS,
+    SET_CURRENT_APPOINMENT,
     CREATE_NOTIFY,
     REMOVE_NOTIFIES,
     REMOVE_NOTIFY
@@ -7,6 +8,7 @@ import {
 
 const initialState = {
     appointments: [],
+    currentAppoinment: null,
     alerts: []
 };
 
@@ -14,6 +16,9 @@ const GlobalReducer = (state = initialState, action) => {
     switch (action.type) {
         case SET_APPOINTMENTS:
             return Object.assign({}, state, {appointments: action.appointments});
+
+        case SET_CURRENT_APPOINMENT:
+            return Object.assign({}, state, {currentAppoinment: action.appointment});
 
         case CREATE_NOTIFY:
             let newAlert = {

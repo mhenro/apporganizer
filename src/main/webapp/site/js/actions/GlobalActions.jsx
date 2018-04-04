@@ -5,6 +5,10 @@ export const getAppointments = (page = 0, size = 5) => {
     return doFetch(getHost() + 'appointments?page=' + page + '&size=' + size);
 };
 
+export const getAppointmentDetails = (appId) => {
+    return doFetch(getHost() + 'appointments/' + appId);
+};
+
 export const confirmAppointment = (appId) => {
     return doFetch(getHost() + 'appointments/' + appId + '/confirm');
 };
@@ -22,6 +26,7 @@ export const addNoteToAppointment = (noteRequest) => {
 };
 
 export const SET_APPOINTMENTS = 'SET_APPOINTMENTS';
+export const SET_CURRENT_APPOINMENT = 'SET_CURRENT_APPOINMENT';
 
 export const CREATE_NOTIFY = 'CREATE_NOTIFY';
 export const REMOVE_NOTIFIES = 'REMOVE_NOTIFIES';
@@ -31,6 +36,13 @@ export const setAppointments = (appointments) => {
     return {
         type: SET_APPOINTMENTS,
         appointments
+    }
+};
+
+export const setCurrentAppointment = (appointment) => {
+    return {
+        type: SET_CURRENT_APPOINMENT,
+        appointment
     }
 };
 
