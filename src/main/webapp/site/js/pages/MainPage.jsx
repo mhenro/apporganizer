@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 import AppointmentPage from './AppointmentPage.jsx';
 import DetailsPage from './DetailsPage.jsx';
+import Notifier from '../components/Notifier.jsx';
 
 class MainPage extends React.Component {
     render() {
@@ -19,6 +20,7 @@ class MainPage extends React.Component {
                             </div>
                         </div>
                     </div>
+                    <Notifier/>
                 </div>
             </BrowserRouter>
         )
