@@ -55,4 +55,15 @@ public class Company implements Serializable {
     public void setContactPerson(ContactPerson contactPerson) {
         this.contactPerson = contactPerson;
     }
+
+    @Override
+    public String toString() {
+        return "Company{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", url='" + url + '\'' +
+                ", address=" + address +
+                ", contactPerson=" + contactPerson +
+                '}';
+    }
 }

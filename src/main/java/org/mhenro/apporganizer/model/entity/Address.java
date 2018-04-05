@@ -41,4 +41,14 @@ public class Address implements Serializable {
     public void setLocality(String locality) {
         this.locality = locality;
     }
+
+    @Override
+    public String toString() {
+        return "Address{" +
+                "street='" + street + '\'' +
+                ", houseNumber=" + houseNumber +
+                ", postalCode='" + postalCode + '\'' +
+                ", locality='" + locality + '\'' +
+                '}';
+    }
 }

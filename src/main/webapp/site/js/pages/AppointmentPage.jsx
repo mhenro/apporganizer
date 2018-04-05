@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Pagination } from 'react-bootstrap';
+import { saveAs } from 'file-saver';
 
 import AppointmentList from '../components/appointment/AppointmentList.jsx';
 import ConfirmDialog from '../components/appointment/ConfirmDialog.jsx';
@@ -12,7 +13,8 @@ import {
     confirmAppointment,
     cancelAppointment,
     deleteAppointment,
-    showConfirmDialog
+    showConfirmDialog,
+    downloadCsv
 } from '../actions/GlobalActions.jsx';
 
 class AppointmentPage extends React.Component {
@@ -60,7 +62,7 @@ class AppointmentPage extends React.Component {
                     />
                 </div>
                 <div className="col-sm-12 text-center">
-                    <button className="btn btn-success">Download as CSV-file</button>
+                    <button onClick={() => this.props.onDownloadCsv()} className="btn btn-success">Download as CSV-file</button>
                 </div>
 
                 {/* popup dialog for actions confirmation */}
@@ -149,6 +151,19 @@ const mapDispatchToProps = (dispatch) => {
             deleteAppointment(appId).then(([response, json]) => {
                 if (response.status === 200) {
                     dispatch(createNotify('success', 'Success', json.message));
+                }
+                else {
+                    dispatch(createNotify('danger', 'Error', json.message));
+                }
+            }).catch(error => {
+                dispatch(createNotify('danger', 'Error', error.message));
+            });
+        },
+
+        onDownloadCsv: () => {
+            downloadCsv().then(([response, blob]) => {
+                if (response.status === 200) {
+                    saveAs(blob, 'appointments.csv');
                 }
                 else {
                     dispatch(createNotify('danger', 'Error', json.message));

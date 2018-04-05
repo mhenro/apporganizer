@@ -50,4 +50,15 @@ public class ContactPerson implements Serializable {
     public void setSalutation(String salutation) {
         this.salutation = salutation;
     }
+
+    @Override
+    public String toString() {
+        return "ContactPerson{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", salutation='" + salutation + '\'' +
+                '}';
+    }
 }

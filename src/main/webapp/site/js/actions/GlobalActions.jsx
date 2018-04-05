@@ -25,6 +25,10 @@ export const addNoteToAppointment = (noteRequest) => {
     return doFetch(getHost() + 'appointments/note', noteRequest);
 };
 
+export const downloadCsv = () => {
+    return doFetch(getHost() + 'download', null, null, 'text/csv', 'blob');
+};
+
 export const SET_APPOINTMENTS = 'SET_APPOINTMENTS';
 export const SET_CURRENT_APPOINMENT = 'SET_CURRENT_APPOINMENT';
 

@@ -24,7 +24,6 @@ public class AppointmentService {
     }
 
     public Page<Appointment> getAppointments(final Pageable pageable) {
-        //return appointmentRepository.findAll(pageable);
         return appointmentRepository.findAppointments(pageable);
     }
 
