@@ -1,11 +1,13 @@
 package org.mhenro.apporganizer.service;
 
 import org.mhenro.apporganizer.model.entity.Appointment;
+import org.mhenro.apporganizer.model.entity.Company;
 import org.mhenro.apporganizer.model.exception.ObjectNotFoundException;
 import org.mhenro.apporganizer.model.exception.WrongDataException;
 import org.mhenro.apporganizer.model.request.AppointmentNoteRequest;
 import org.mhenro.apporganizer.model.request.AppointmentRequest;
 import org.mhenro.apporganizer.repository.AppointmentRepository;
+import org.mhenro.apporganizer.repository.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,10 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class AppointmentService {
     private AppointmentRepository appointmentRepository;
+    private CompanyRepository companyRepository;
 
     @Autowired
-    public AppointmentService(final AppointmentRepository appointmentRepository) {
+    public AppointmentService(final AppointmentRepository appointmentRepository, final CompanyRepository companyRepository) {
         this.appointmentRepository = appointmentRepository;
+        this.companyRepository = companyRepository;
     }
 
     public Page<Appointment> getAppointments(final Pageable pageable) {
@@ -34,7 +38,12 @@ public class AppointmentService {
 
     @Transactional
     public void saveAppointment(final AppointmentRequest request) {
-        throw new UnsupportedOperationException("Method is not implemented yet");
+        final Appointment appointment = getAppointmentDetails(request.getAppId());
+        final Company company = companyRepository.findById(request.getCompanyId()).orElse(null);
+        appointment.setDate(request.getDate());
+        appointment.setTime(request.getTime());
+        appointment.setCompany(company);
+        appointmentRepository.save(appointment);
     }
 
     @Transactional

@@ -35,7 +35,7 @@ public class AppointmentController {
         return Response.createResponseEntity(appointmentService.getAppointmentDetails(id), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "appointments", method = RequestMethod.PUT)
+    @RequestMapping(value = "appointments", method = RequestMethod.POST)
     public ResponseEntity<?> saveAppointment(@RequestBody final AppointmentRequest request) {
         appointmentService.saveAppointment(request);
         return Response.createResponseEntity("Appointment was saved successfully", HttpStatus.OK);

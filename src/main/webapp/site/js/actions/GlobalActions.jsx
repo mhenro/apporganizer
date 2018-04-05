@@ -25,6 +25,14 @@ export const addNoteToAppointment = (noteRequest) => {
     return doFetch(getHost() + 'appointments/note', noteRequest);
 };
 
+export const saveAppointment = (appointmentRequest) => {
+    return doFetch(getHost() + 'appointments', appointmentRequest);
+};
+
+export const getAllCompanies = () => {
+    return doFetch(getHost() + 'companies');
+};
+
 export const downloadCsv = () => {
     return doFetch(getHost() + 'download', null, null, 'text/csv', 'blob');
 };

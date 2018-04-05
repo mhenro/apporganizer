@@ -3,19 +3,30 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Select from 'react-select';
 
-import { getAppointmentDetails, setCurrentAppointment, createNotify } from '../actions/GlobalActions.jsx';
+import {
+    getAppointments,
+    setAppointments,
+    getAppointmentDetails,
+    setCurrentAppointment,
+    saveAppointment,
+    getAllCompanies,
+    createNotify
+} from '../actions/GlobalActions.jsx';
 
 class DetailsPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             date: '',
-            time: ''
+            time: '',
+            companies: [{value: null, label: 'Not selected'}],
+            company: {value: null, label: 'Not selected'}
         };
     }
 
     componentDidMount() {
         this.props.onGetDetails(this.props.match.params.appId, () => this.updateForm());
+        this.props.onGetAllCompanies(items => this.updateComboboxItems(items), () => this.updateForm());
     }
 
     render() {
@@ -51,7 +62,7 @@ class DetailsPage extends React.Component {
                                 <div className="form-group">
                                     <label className="control-label col-sm-2" htmlFor="company">Company</label>
                                     <div className="col-sm-10">
-                                        <Select value={this.state.company} id="company" options={this.getComboboxItems()} onChange={c => this.onCompanyChange(c)} placeholder="Choose company"/>
+                                        <Select value={this.state.company} id="company" options={this.state.companies} onChange={c => this.onCompanyChange(c)} placeholder="Choose company"/>
                                     </div>
                                 </div>
 
@@ -80,18 +91,19 @@ class DetailsPage extends React.Component {
         switch (proxy.target.id) {
             case 'date': this.setState({date: proxy.target.value}); break;
             case 'time': this.setState({time: proxy.target.value}); break;
+            case 'company': this.setState({company: proxy.target.value}); break;
         }
     }
 
-    getComboboxItems() {
+    updateComboboxItems(items) {
         let options = [];
-        /*for (var lang in locale) {
+        for (let company in items) {
             options.push({
-                value: lang,
-                label: locale[lang].label
+                value: items[company].id,
+                label: items[company].name
             });
-        }*/
-        return options;
+        }
+        this.setState({companies: options});
     }
 
     onCompanyChange(company) {
@@ -103,15 +115,26 @@ class DetailsPage extends React.Component {
     updateForm() {
         this.setState({
             date: this.props.currentAppoinment.date,
-            time: this.props.currentAppoinment.time
+            time: this.props.currentAppoinment.time,
+            company: {value: this.props.currentAppoinment.company.id, label: this.props.currentAppoinment.company.name}
         });
     }
 
-    onSubmit(e) {
-        if (e) {
-            e.preventDefault();
+    onSubmit(event) {
+        if (event) {
+            event.preventDefault();
         }
-        console.log('App saved');
+
+        let appointmentRequest = {
+            appId: this.props.currentAppoinment.id,
+            date: this.state.date,
+            time: this.state.time,
+            companyId: this.state.company.value
+        };
+        this.props.onSaveAppointment(appointmentRequest);
+        setTimeout(() => {
+            this.props.onUpdateAppointments();
+        }, 500);
     }
 }
 
@@ -134,7 +157,46 @@ const mapDispatchToProps = (dispatch) => {
             }).catch(error => {
                 dispatch(createNotify('danger', 'Error', error.message));
             });
-        }
+        },
+
+        onSaveAppointment: (appointmentRequest) => {
+            saveAppointment(appointmentRequest).then(([response, json]) => {
+                if (response.status === 200) {
+                    dispatch(createNotify('success', 'Success', json.message));
+                } else {
+                    dispatch(createNotify('danger', 'Error', json.message));
+                }
+            }).catch(error => {
+                dispatch(createNotify('danger', 'Error', error.message));
+            });
+        },
+
+        onGetAllCompanies: (callback, updateCallback) => {
+            getAllCompanies().then(([response, json]) => {
+                if (response.status === 200) {
+                    callback(json.message);
+                    updateCallback();
+                } else {
+                    dispatch(createNotify('danger', 'Error', json.message));
+                }
+            }).catch(error => {
+                dispatch(createNotify('danger', 'Error', error.message));
+            });
+        },
+
+        onUpdateAppointments: () => {
+            getAppointments(0).then(([response, json]) => {
+                if (response.status === 200) {
+                    let appointments = json.content;
+                    dispatch(setAppointments(appointments));
+                }
+                else {
+                    dispatch(createNotify('danger', 'Error', json.message));
+                }
+            }).catch(error => {
+                dispatch(createNotify('danger', 'Error', error.message));
+            });
+        },
     }
 };
 

@@ -5328,7 +5328,7 @@ module.exports = exports['default'];
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.removeNotify = exports.removeNotifies = exports.createNotify = exports.closeConfirmDialog = exports.showConfirmDialog = exports.setCurrentAppointment = exports.setAppointments = exports.REMOVE_NOTIFY = exports.REMOVE_NOTIFIES = exports.CREATE_NOTIFY = exports.CLOSE_CONFIRM_DIALOG = exports.SHOW_CONFIRM_DIALOG = exports.SET_CURRENT_APPOINMENT = exports.SET_APPOINTMENTS = exports.downloadCsv = exports.addNoteToAppointment = exports.deleteAppointment = exports.cancelAppointment = exports.confirmAppointment = exports.getAppointmentDetails = exports.getAppointments = undefined;
+exports.removeNotify = exports.removeNotifies = exports.createNotify = exports.closeConfirmDialog = exports.showConfirmDialog = exports.setCurrentAppointment = exports.setAppointments = exports.REMOVE_NOTIFY = exports.REMOVE_NOTIFIES = exports.CREATE_NOTIFY = exports.CLOSE_CONFIRM_DIALOG = exports.SHOW_CONFIRM_DIALOG = exports.SET_CURRENT_APPOINMENT = exports.SET_APPOINTMENTS = exports.downloadCsv = exports.getAllCompanies = exports.saveAppointment = exports.addNoteToAppointment = exports.deleteAppointment = exports.cancelAppointment = exports.confirmAppointment = exports.getAppointmentDetails = exports.getAppointments = undefined;
 
 var _fetch = __webpack_require__(567);
 
@@ -5363,6 +5363,14 @@ var deleteAppointment = exports.deleteAppointment = function deleteAppointment(a
 
 var addNoteToAppointment = exports.addNoteToAppointment = function addNoteToAppointment(noteRequest) {
     return (0, _fetch2.default)((0, _utils.getHost)() + 'appointments/note', noteRequest);
+};
+
+var saveAppointment = exports.saveAppointment = function saveAppointment(appointmentRequest) {
+    return (0, _fetch2.default)((0, _utils.getHost)() + 'appointments', appointmentRequest);
+};
+
+var getAllCompanies = exports.getAllCompanies = function getAllCompanies() {
+    return (0, _fetch2.default)((0, _utils.getHost)() + 'companies');
 };
 
 var downloadCsv = exports.downloadCsv = function downloadCsv() {
@@ -52751,7 +52759,9 @@ var DetailsPage = function (_React$Component) {
 
         _this.state = {
             date: '',
-            time: ''
+            time: '',
+            companies: [{ value: null, label: 'Not selected' }],
+            company: { value: null, label: 'Not selected' }
         };
         return _this;
     }
@@ -52762,6 +52772,11 @@ var DetailsPage = function (_React$Component) {
             var _this2 = this;
 
             this.props.onGetDetails(this.props.match.params.appId, function () {
+                return _this2.updateForm();
+            });
+            this.props.onGetAllCompanies(function (items) {
+                return _this2.updateComboboxItems(items);
+            }, function () {
                 return _this2.updateForm();
             });
         }
@@ -52847,7 +52862,7 @@ var DetailsPage = function (_React$Component) {
                                     _react2.default.createElement(
                                         'div',
                                         { className: 'col-sm-10' },
-                                        _react2.default.createElement(_reactSelect2.default, { value: this.state.company, id: 'company', options: this.getComboboxItems(), onChange: function onChange(c) {
+                                        _react2.default.createElement(_reactSelect2.default, { value: this.state.company, id: 'company', options: this.state.companies, onChange: function onChange(c) {
                                                 return _this3.onCompanyChange(c);
                                             }, placeholder: 'Choose company' })
                                     )
@@ -52896,19 +52911,21 @@ var DetailsPage = function (_React$Component) {
                     this.setState({ date: proxy.target.value });break;
                 case 'time':
                     this.setState({ time: proxy.target.value });break;
+                case 'company':
+                    this.setState({ company: proxy.target.value });break;
             }
         }
     }, {
-        key: 'getComboboxItems',
-        value: function getComboboxItems() {
+        key: 'updateComboboxItems',
+        value: function updateComboboxItems(items) {
             var options = [];
-            /*for (var lang in locale) {
+            for (var company in items) {
                 options.push({
-                    value: lang,
-                    label: locale[lang].label
+                    value: items[company].id,
+                    label: items[company].name
                 });
-            }*/
-            return options;
+            }
+            this.setState({ companies: options });
         }
     }, {
         key: 'onCompanyChange',
@@ -52922,16 +52939,29 @@ var DetailsPage = function (_React$Component) {
         value: function updateForm() {
             this.setState({
                 date: this.props.currentAppoinment.date,
-                time: this.props.currentAppoinment.time
+                time: this.props.currentAppoinment.time,
+                company: { value: this.props.currentAppoinment.company.id, label: this.props.currentAppoinment.company.name }
             });
         }
     }, {
         key: 'onSubmit',
-        value: function onSubmit(e) {
-            if (e) {
-                e.preventDefault();
+        value: function onSubmit(event) {
+            var _this4 = this;
+
+            if (event) {
+                event.preventDefault();
             }
-            console.log('App saved');
+
+            var appointmentRequest = {
+                appId: this.props.currentAppoinment.id,
+                date: this.state.date,
+                time: this.state.time,
+                companyId: this.state.company.value
+            };
+            this.props.onSaveAppointment(appointmentRequest);
+            setTimeout(function () {
+                _this4.props.onUpdateAppointments();
+            }, 500);
         }
     }]);
 
@@ -52955,6 +52985,56 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
                 if (response.status === 200) {
                     dispatch((0, _GlobalActions.setCurrentAppointment)(json.message));
                     callback();
+                } else {
+                    dispatch((0, _GlobalActions.createNotify)('danger', 'Error', json.message));
+                }
+            }).catch(function (error) {
+                dispatch((0, _GlobalActions.createNotify)('danger', 'Error', error.message));
+            });
+        },
+
+        onSaveAppointment: function onSaveAppointment(appointmentRequest) {
+            (0, _GlobalActions.saveAppointment)(appointmentRequest).then(function (_ref3) {
+                var _ref4 = _slicedToArray(_ref3, 2),
+                    response = _ref4[0],
+                    json = _ref4[1];
+
+                if (response.status === 200) {
+                    dispatch((0, _GlobalActions.createNotify)('success', 'Success', json.message));
+                } else {
+                    dispatch((0, _GlobalActions.createNotify)('danger', 'Error', json.message));
+                }
+            }).catch(function (error) {
+                dispatch((0, _GlobalActions.createNotify)('danger', 'Error', error.message));
+            });
+        },
+
+        onGetAllCompanies: function onGetAllCompanies(callback, updateCallback) {
+            (0, _GlobalActions.getAllCompanies)().then(function (_ref5) {
+                var _ref6 = _slicedToArray(_ref5, 2),
+                    response = _ref6[0],
+                    json = _ref6[1];
+
+                if (response.status === 200) {
+                    callback(json.message);
+                    updateCallback();
+                } else {
+                    dispatch((0, _GlobalActions.createNotify)('danger', 'Error', json.message));
+                }
+            }).catch(function (error) {
+                dispatch((0, _GlobalActions.createNotify)('danger', 'Error', error.message));
+            });
+        },
+
+        onUpdateAppointments: function onUpdateAppointments() {
+            (0, _GlobalActions.getAppointments)(0).then(function (_ref7) {
+                var _ref8 = _slicedToArray(_ref7, 2),
+                    response = _ref8[0],
+                    json = _ref8[1];
+
+                if (response.status === 200) {
+                    var appointments = json.content;
+                    dispatch((0, _GlobalActions.setAppointments)(appointments));
                 } else {
                     dispatch((0, _GlobalActions.createNotify)('danger', 'Error', json.message));
                 }
