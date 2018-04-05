@@ -28,6 +28,9 @@ export const addNoteToAppointment = (noteRequest) => {
 export const SET_APPOINTMENTS = 'SET_APPOINTMENTS';
 export const SET_CURRENT_APPOINMENT = 'SET_CURRENT_APPOINMENT';
 
+export const SHOW_CONFIRM_DIALOG = 'SHOW_CONFIRM_DIALOG';
+export const CLOSE_CONFIRM_DIALOG = 'CLOSE_CONFIRM_DIALOG';
+
 export const CREATE_NOTIFY = 'CREATE_NOTIFY';
 export const REMOVE_NOTIFIES = 'REMOVE_NOTIFIES';
 export const REMOVE_NOTIFY = 'REMOVE_NOTIFY';
@@ -43,6 +46,19 @@ export const setCurrentAppointment = (appointment) => {
     return {
         type: SET_CURRENT_APPOINMENT,
         appointment
+    }
+};
+
+export const showConfirmDialog = (onOK) => {
+    return {
+        type: SHOW_CONFIRM_DIALOG,
+        onOK
+    }
+};
+
+export const closeConfirmDialog = () => {
+    return {
+        type: CLOSE_CONFIRM_DIALOG
     }
 };
 

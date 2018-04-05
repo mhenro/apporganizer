@@ -1,6 +1,8 @@
 import {
     SET_APPOINTMENTS,
     SET_CURRENT_APPOINMENT,
+    SHOW_CONFIRM_DIALOG,
+    CLOSE_CONFIRM_DIALOG,
     CREATE_NOTIFY,
     REMOVE_NOTIFIES,
     REMOVE_NOTIFY
@@ -9,6 +11,8 @@ import {
 const initialState = {
     appointments: [],
     currentAppoinment: null,
+    confirmDialogVisible: false,
+    confirmDialogOKCallback: null,
     alerts: []
 };
 
@@ -19,6 +23,12 @@ const GlobalReducer = (state = initialState, action) => {
 
         case SET_CURRENT_APPOINMENT:
             return Object.assign({}, state, {currentAppoinment: action.appointment});
+
+        case SHOW_CONFIRM_DIALOG:
+            return Object.assign({}, state, {confirmDialogVisible: true, confirmDialogOKCallback: action.onOK});
+
+        case CLOSE_CONFIRM_DIALOG:
+            return Object.assign({}, state, {confirmDialogVisible: false, confirmDialogOKCallback: null});
 
         case CREATE_NOTIFY:
             let newAlert = {

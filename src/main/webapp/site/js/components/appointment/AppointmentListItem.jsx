@@ -7,7 +7,6 @@ import { formatDate } from '../../utils.jsx';
 /*
     props:
     - appointment - object
-    - onUpdatePage - callback
     - onConfirm - callback
     - onCancel - callback
     - onDelete - callback
@@ -68,9 +67,6 @@ class AppointmentListItem extends React.Component {
 
     onClick(callback) {
         callback();
-        setTimeout(() => {
-            this.props.onUpdatePage();
-        }, 500);
     }
 
     getDate() {

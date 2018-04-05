@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Pagination } from 'react-bootstrap';
 
 import AppointmentList from '../components/appointment/AppointmentList.jsx';
+import ConfirmDialog from '../components/appointment/ConfirmDialog.jsx';
 
 import {
     getAppointments,
@@ -11,7 +12,8 @@ import {
     confirmAppointment,
     cancelAppointment,
     deleteAppointment,
-    addNoteToAppointment
+    addNoteToAppointment,
+    showConfirmDialog
 } from '../actions/GlobalActions.jsx';
 
 class AppointmentPage extends React.Component {
@@ -52,15 +54,17 @@ class AppointmentPage extends React.Component {
                 </div>
                 <div className="col-sm-12 text-center">
                     <AppointmentList appointments={this.props.appointments}
-                                     onUpdatePage={() => this.pageSelect(this.state.activePage)}
-                                     onConfirm={appId => this.props.onConfirm(appId)}
-                                     onCancel={appId => this.props.onCancel(appId)}
-                                     onDelete={appId => this.props.onDelete(appId)}
+                                     onConfirm={appId => this.onConfirmAction(() => this.props.onConfirm(appId))}
+                                     onCancel={appId => this.onConfirmAction(() => this.props.onCancel(appId))}
+                                     onDelete={appId => this.onConfirmAction(() => this.props.onDelete(appId))}
                     />
                 </div>
                 <div className="col-sm-12 text-center">
                     <button className="btn btn-success">Download as CSV-file</button>
                 </div>
+
+                {/* popup dialog for actions confirmation */}
+                <ConfirmDialog onUpdatePage={() => this.pageSelect(this.state.activePage)}/>
             </div>
         )
     }
@@ -77,6 +81,10 @@ class AppointmentPage extends React.Component {
         this.setState({
             totalPages: page.totalPages,
         });
+    }
+
+    onConfirmAction(action) {
+        this.props.onConfirmAction(action);
     }
 }
 
@@ -101,6 +109,10 @@ const mapDispatchToProps = (dispatch) => {
             }).catch(error => {
                 dispatch(createNotify('danger', 'Error', error.message));
             });
+        },
+
+        onConfirmAction: (action) => {
+            dispatch(showConfirmDialog(action));
         },
 
         onConfirm: (appId) => {
