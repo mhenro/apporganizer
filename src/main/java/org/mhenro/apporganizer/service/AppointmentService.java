@@ -51,9 +51,9 @@ public class AppointmentService {
     @Transactional
     public void addNoteToAppointment(final AppointmentNoteRequest request) {
         final Appointment appointment = getAppointmentDetails(request.getId());
-        if (!appointment.getConfirmed()) {
-            throw new WrongDataException("You can add note only to confirmed appointment");
-        }
+        //if (!appointment.getConfirmed()) {
+        //    throw new WrongDataException("You can add note only to confirmed appointment");
+        //}
         appointment.setNote(request.getNote());
         appointmentRepository.save(appointment);
     }

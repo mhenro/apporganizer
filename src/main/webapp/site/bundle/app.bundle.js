@@ -5389,10 +5389,12 @@ var setCurrentAppointment = exports.setCurrentAppointment = function setCurrentA
     };
 };
 
-var showConfirmDialog = exports.showConfirmDialog = function showConfirmDialog(onOK) {
+var showConfirmDialog = exports.showConfirmDialog = function showConfirmDialog(onOK, noteInputVisible, appointmentId) {
     return {
         type: SHOW_CONFIRM_DIALOG,
-        onOK: onOK
+        onOK: onOK,
+        noteInputVisible: noteInputVisible,
+        appointmentId: appointmentId
     };
 };
 
@@ -40021,20 +40023,23 @@ var AppointmentPage = function (_React$Component) {
                     'div',
                     { className: 'col-sm-12 text-center' },
                     _react2.default.createElement(_AppointmentList2.default, { appointments: this.props.appointments,
+                        onShowNote: function onShowNote(note) {
+                            return _this3.props.onShowNote(note);
+                        },
                         onConfirm: function onConfirm(appId) {
                             return _this3.onConfirmAction(function () {
                                 return _this3.props.onConfirm(appId);
-                            });
+                            }, true, appId);
                         },
                         onCancel: function onCancel(appId) {
                             return _this3.onConfirmAction(function () {
                                 return _this3.props.onCancel(appId);
-                            });
+                            }, false, appId);
                         },
                         onDelete: function onDelete(appId) {
                             return _this3.onConfirmAction(function () {
                                 return _this3.props.onDelete(appId);
-                            });
+                            }, false, appId);
                         }
                     })
                 ),
@@ -40074,8 +40079,8 @@ var AppointmentPage = function (_React$Component) {
         }
     }, {
         key: 'onConfirmAction',
-        value: function onConfirmAction(action) {
-            this.props.onConfirmAction(action);
+        value: function onConfirmAction(action, noteInputVisible, appId) {
+            this.props.onConfirmAction(action, noteInputVisible, appId);
         }
     }]);
 
@@ -40108,8 +40113,12 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
             });
         },
 
-        onConfirmAction: function onConfirmAction(action) {
-            dispatch((0, _GlobalActions.showConfirmDialog)(action));
+        onConfirmAction: function onConfirmAction(action, noteInputVisible, appId) {
+            dispatch((0, _GlobalActions.showConfirmDialog)(action, noteInputVisible, appId));
+        },
+
+        onShowNote: function onShowNote(note) {
+            dispatch((0, _GlobalActions.createNotify)('info', 'Info', note));
         },
 
         onConfirm: function onConfirm(appId) {
@@ -51422,6 +51431,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /*
     props:
     - appointments - array
+    - onShowNote - callback
     - onConfirm - callback
     - onCancel - callback
     - onDelete - callback
@@ -51498,6 +51508,7 @@ var AppointmentList = function (_React$Component) {
 
             return this.props.appointments.map(function (app, key) {
                 return _react2.default.createElement(_AppointmentListItem2.default, { key: key, appointment: app,
+                    onShowNote: _this2.props.onShowNote,
                     onConfirm: _this2.props.onConfirm,
                     onCancel: _this2.props.onCancel,
                     onDelete: _this2.props.onDelete
@@ -51543,6 +51554,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /*
     props:
     - appointment - object
+    - onShowNote - callback
     - onConfirm - callback
     - onCancel - callback
     - onDelete - callback
@@ -51638,24 +51650,22 @@ var AppointmentListItem = function (_React$Component) {
                 { className: 'btn-group' },
                 _react2.default.createElement(
                     'button',
-                    { className: 'btn btn-info ' + (noteBtnVisible ? '' : 'hidden') },
+                    { onClick: function onClick() {
+                            return _this2.props.onShowNote(_this2.props.appointment.note);
+                        }, className: 'btn btn-info ' + (noteBtnVisible ? '' : 'hidden') },
                     'Show note'
                 ),
                 _react2.default.createElement(
                     'button',
                     { onClick: function onClick() {
-                            return _this2.onClick(function () {
-                                return _this2.props.onConfirm(appId);
-                            });
+                            return _this2.props.onConfirm(appId);
                         }, className: 'btn btn-success ' + (confirmBtnVisible ? '' : 'hidden') },
                     'Confirm'
                 ),
                 _react2.default.createElement(
                     'button',
                     { onClick: function onClick() {
-                            return _this2.onClick(function () {
-                                return _this2.props.onCancel(appId);
-                            });
+                            return _this2.props.onCancel(appId);
                         }, className: 'btn btn-warning ' + (cancelBtnVisible ? '' : 'hidden') },
                     'Cancel'
                 ),
@@ -51667,18 +51677,11 @@ var AppointmentListItem = function (_React$Component) {
                 _react2.default.createElement(
                     'button',
                     { onClick: function onClick() {
-                            return _this2.onClick(function () {
-                                return _this2.props.onDelete(appId);
-                            });
+                            return _this2.props.onDelete(appId);
                         }, className: 'btn btn-danger ' + (deleteBtnVisible ? '' : 'hidden') },
                     'Delete'
                 )
             );
-        }
-    }, {
-        key: 'onClick',
-        value: function onClick(callback) {
-            callback();
         }
     }, {
         key: 'getDate',
@@ -51725,6 +51728,8 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = __webpack_require__(0);
@@ -51752,10 +51757,15 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var ConfirmDialog = function (_React$Component) {
     _inherits(ConfirmDialog, _React$Component);
 
-    function ConfirmDialog() {
+    function ConfirmDialog(props) {
         _classCallCheck(this, ConfirmDialog);
 
-        return _possibleConstructorReturn(this, (ConfirmDialog.__proto__ || Object.getPrototypeOf(ConfirmDialog)).apply(this, arguments));
+        var _this = _possibleConstructorReturn(this, (ConfirmDialog.__proto__ || Object.getPrototypeOf(ConfirmDialog)).call(this, props));
+
+        _this.state = {
+            note: ''
+        };
+        return _this;
     }
 
     _createClass(ConfirmDialog, [{
@@ -51778,7 +51788,9 @@ var ConfirmDialog = function (_React$Component) {
                 _react2.default.createElement(
                     _reactBootstrap.Modal.Body,
                     null,
-                    'Are you sure you want to proceed with this operation?'
+                    'Are you sure you want to proceed with this operation?',
+                    _react2.default.createElement('br', null),
+                    this.renderNoteInput()
                 ),
                 _react2.default.createElement(
                     _reactBootstrap.Modal.Footer,
@@ -51801,19 +51813,57 @@ var ConfirmDialog = function (_React$Component) {
                     _this3.props.onUpdatePage();
                 }, 500);
             }
+            this.setState({
+                note: ''
+            });
         }
     }, {
         key: 'onOK',
         value: function onOK() {
+            if (this.props.addNoteOnConfirm) {
+                this.onSaveNote();
+            }
             if (typeof this.props.confirmDialogOKCallback === 'function') {
                 this.props.confirmDialogOKCallback();
             }
             this.onClose();
         }
     }, {
+        key: 'onSaveNote',
+        value: function onSaveNote() {
+            var _this4 = this;
+
+            var noteRequest = {
+                id: this.props.appointmentId,
+                note: this.state.note
+            };
+            this.props.onAddNote(noteRequest, function () {
+                return _this4.onClose();
+            });
+        }
+    }, {
+        key: 'renderNoteInput',
+        value: function renderNoteInput() {
+            var _this5 = this;
+
+            if (this.props.addNoteOnConfirm) {
+                return _react2.default.createElement('input', { value: this.state.note, onChange: function onChange(proxy) {
+                        return _this5.onFieldChange(proxy);
+                    }, type: 'text', className: 'form-control', id: 'note', placeholder: 'Enter the note', name: 'note' });
+            }
+        }
+    }, {
+        key: 'onFieldChange',
+        value: function onFieldChange(proxy) {
+            switch (proxy.target.id) {
+                case 'note':
+                    this.setState({ note: proxy.target.value });break;
+            }
+        }
+    }, {
         key: 'renderFooterButtons',
         value: function renderFooterButtons() {
-            var _this4 = this;
+            var _this6 = this;
 
             return _react2.default.createElement(
                 'div',
@@ -51821,7 +51871,7 @@ var ConfirmDialog = function (_React$Component) {
                 _react2.default.createElement(
                     _reactBootstrap.Button,
                     { onClick: function onClick() {
-                            return _this4.onOK();
+                            return _this6.onOK();
                         },
                         className: 'btn btn-success' },
                     'OK'
@@ -51829,7 +51879,7 @@ var ConfirmDialog = function (_React$Component) {
                 _react2.default.createElement(
                     _reactBootstrap.Button,
                     { onClick: function onClick() {
-                            return _this4.onClose();
+                            return _this6.onClose();
                         },
                         className: 'btn btn-default' },
                     'Cancel'
@@ -51844,12 +51894,31 @@ var ConfirmDialog = function (_React$Component) {
 var mapStateToProps = function mapStateToProps(state) {
     return {
         confirmDialogVisible: state.GlobalReducer.confirmDialogVisible,
-        confirmDialogOKCallback: state.GlobalReducer.confirmDialogOKCallback
+        confirmDialogOKCallback: state.GlobalReducer.confirmDialogOKCallback,
+        addNoteOnConfirm: state.GlobalReducer.addNoteOnConfirm,
+        appointmentId: state.GlobalReducer.appointmentId
     };
 };
 
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     return {
+        onAddNote: function onAddNote(noteRequest, onCloseCallback) {
+            (0, _GlobalActions.addNoteToAppointment)(noteRequest).then(function (_ref) {
+                var _ref2 = _slicedToArray(_ref, 2),
+                    response = _ref2[0],
+                    json = _ref2[1];
+
+                if (response.status === 200) {
+                    dispatch((0, _GlobalActions.createNotify)('success', 'Success', json.message));
+                    onCloseCallback();
+                } else {
+                    dispatch((0, _GlobalActions.createNotify)('danger', 'Error', json.message));
+                }
+            }).catch(function (error) {
+                dispatch((0, _GlobalActions.createNotify)('danger', 'Error', error.message));
+            });
+        },
+
         onCloseDialog: function onCloseDialog() {
             dispatch((0, _GlobalActions.closeConfirmDialog)());
         }
@@ -60749,8 +60818,10 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 var initialState = {
     appointments: [],
     currentAppoinment: null,
+    appointmentId: null,
     confirmDialogVisible: false,
     confirmDialogOKCallback: null,
+    addNoteOnConfirm: false,
     alerts: []
 };
 
@@ -60766,10 +60837,20 @@ var GlobalReducer = function GlobalReducer() {
             return Object.assign({}, state, { currentAppoinment: action.appointment });
 
         case _GlobalActions.SHOW_CONFIRM_DIALOG:
-            return Object.assign({}, state, { confirmDialogVisible: true, confirmDialogOKCallback: action.onOK });
+            return Object.assign({}, state, {
+                confirmDialogVisible: true,
+                confirmDialogOKCallback: action.onOK,
+                addNoteOnConfirm: action.noteInputVisible,
+                appointmentId: action.appointmentId
+            });
 
         case _GlobalActions.CLOSE_CONFIRM_DIALOG:
-            return Object.assign({}, state, { confirmDialogVisible: false, confirmDialogOKCallback: null });
+            return Object.assign({}, state, {
+                confirmDialogVisible: false,
+                confirmDialogOKCallback: null,
+                addNoteOnConfirm: false,
+                appointmentId: null
+            });
 
         case _GlobalActions.CREATE_NOTIFY:
             var newAlert = {

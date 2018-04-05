@@ -7,6 +7,7 @@ import { formatDate } from '../../utils.jsx';
 /*
     props:
     - appointment - object
+    - onShowNote - callback
     - onConfirm - callback
     - onCancel - callback
     - onDelete - callback
@@ -56,17 +57,13 @@ class AppointmentListItem extends React.Component {
 
         return (
             <div className="btn-group">
-                <button className={'btn btn-info ' + (noteBtnVisible ? '' : 'hidden')}>Show note</button>
-                <button onClick={() => this.onClick(() => this.props.onConfirm(appId))} className={'btn btn-success ' + (confirmBtnVisible ? '' : 'hidden')}>Confirm</button>
-                <button onClick={() => this.onClick(() => this.props.onCancel(appId))} className={'btn btn-warning ' + (cancelBtnVisible ? '' : 'hidden')}>Cancel</button>
+                <button onClick={() => this.props.onShowNote(this.props.appointment.note)} className={'btn btn-info ' + (noteBtnVisible ? '' : 'hidden')}>Show note</button>
+                <button onClick={() => this.props.onConfirm(appId)} className={'btn btn-success ' + (confirmBtnVisible ? '' : 'hidden')}>Confirm</button>
+                <button onClick={() => this.props.onCancel(appId)} className={'btn btn-warning ' + (cancelBtnVisible ? '' : 'hidden')}>Cancel</button>
                 <Link to={'/appointments/' + this.props.appointment.id} className={'btn btn-info ' + (editBtnVisible ? '' : 'hidden')}>Edit</Link>
-                <button onClick={() => this.onClick(() => this.props.onDelete(appId))} className={'btn btn-danger ' + (deleteBtnVisible ? '' : 'hidden')}>Delete</button>
+                <button onClick={() => this.props.onDelete(appId)} className={'btn btn-danger ' + (deleteBtnVisible ? '' : 'hidden')}>Delete</button>
             </div>
         )
-    }
-
-    onClick(callback) {
-        callback();
     }
 
     getDate() {

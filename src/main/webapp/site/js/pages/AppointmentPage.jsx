@@ -12,7 +12,6 @@ import {
     confirmAppointment,
     cancelAppointment,
     deleteAppointment,
-    addNoteToAppointment,
     showConfirmDialog
 } from '../actions/GlobalActions.jsx';
 
@@ -54,9 +53,10 @@ class AppointmentPage extends React.Component {
                 </div>
                 <div className="col-sm-12 text-center">
                     <AppointmentList appointments={this.props.appointments}
-                                     onConfirm={appId => this.onConfirmAction(() => this.props.onConfirm(appId))}
-                                     onCancel={appId => this.onConfirmAction(() => this.props.onCancel(appId))}
-                                     onDelete={appId => this.onConfirmAction(() => this.props.onDelete(appId))}
+                                     onShowNote={note => this.props.onShowNote(note)}
+                                     onConfirm={appId => this.onConfirmAction(() => this.props.onConfirm(appId), true, appId)}
+                                     onCancel={appId => this.onConfirmAction(() => this.props.onCancel(appId), false, appId)}
+                                     onDelete={appId => this.onConfirmAction(() => this.props.onDelete(appId), false, appId)}
                     />
                 </div>
                 <div className="col-sm-12 text-center">
@@ -83,8 +83,8 @@ class AppointmentPage extends React.Component {
         });
     }
 
-    onConfirmAction(action) {
-        this.props.onConfirmAction(action);
+    onConfirmAction(action, noteInputVisible, appId) {
+        this.props.onConfirmAction(action, noteInputVisible, appId);
     }
 }
 
@@ -111,8 +111,12 @@ const mapDispatchToProps = (dispatch) => {
             });
         },
 
-        onConfirmAction: (action) => {
-            dispatch(showConfirmDialog(action));
+        onConfirmAction: (action, noteInputVisible, appId) => {
+            dispatch(showConfirmDialog(action, noteInputVisible, appId));
+        },
+
+        onShowNote: (note) => {
+            dispatch(createNotify('info', 'Info', note));
         },
 
         onConfirm: (appId) => {

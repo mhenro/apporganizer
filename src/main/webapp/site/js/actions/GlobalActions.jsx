@@ -49,10 +49,12 @@ export const setCurrentAppointment = (appointment) => {
     }
 };
 
-export const showConfirmDialog = (onOK) => {
+export const showConfirmDialog = (onOK, noteInputVisible, appointmentId) => {
     return {
         type: SHOW_CONFIRM_DIALOG,
-        onOK
+        onOK,
+        noteInputVisible,
+        appointmentId
     }
 };
 
