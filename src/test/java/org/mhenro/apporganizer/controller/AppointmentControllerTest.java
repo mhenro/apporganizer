@@ -6,8 +6,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mhenro.apporganizer.model.entity.Appointment;
 import org.mhenro.apporganizer.model.exception.ObjectNotFoundException;
+import org.mhenro.apporganizer.model.exception.WrongDataException;
 import org.mhenro.apporganizer.model.request.AppointmentRequest;
 import org.mhenro.apporganizer.service.AppointmentService;
+import org.mhenro.apporganizer.service.AppointmentServiceTest;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -21,6 +23,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import static org.hamcrest.core.Is.is;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -82,5 +85,12 @@ public class AppointmentControllerTest {
         //request.setTime(LocalTime.of(11, 23, 59));
         final String json = mapper.writeValueAsString(request);
         mvc.perform(post("/appointments").content(json).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andExpect(content().string("{\"message\":\"Appointment was saved successfully\"}"));
+    }
+
+    @Test
+    public void confirmAppointment() throws Exception {
+        mvc.perform(get("/appointments/500/confirm")).andExpect(status().isOk()).andExpect(content().string("{\"message\":\"Appointment was confirmed successfully\"}"));
+        doThrow(new WrongDataException("Appointment is already cancelled")).when(appointmentService).confirmAppointment(any(Long.class));
+        mvc.perform(get("/appointments/500/confirm")).andExpect(status().isBadRequest()).andExpect(content().string("{\"message\":\"Appointment is already cancelled\"}"));
     }
 }
